@@ -161,6 +161,66 @@ aws s3api get-object --bucket ctfswagshop --version-id nt_d96XI4vefGPrnjRM_JcICf
 
 ## Flag four
 
+Having obtained an authetnication token, we then return to the **shipping.UUID.ctfio.com** host, to see if the obtained token might
+allow access.
+
+By setting the token as a Header we can now authenticate to the host.
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/34b0d714-7510-42c8-82df-599d1d2ae9cd)
+
+By visiting the msettings endpoint we are also enable the developer environment which was previously disabled
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/223f5275-3b15-458f-a5e2-7230617f30a6)
+
+We can then visit the newly activated environment and proceed with registering an account, as the registration here is not disabled.
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/1a726af1-9c3a-4ca3-a74b-9fc7f4f0e04e)
+
+After registering we can authenticate and the fourth flag should be presented to us.
+
+## Flag five
+
+By navigating through the shipping domain, it was observed that the user for whom we had a token did not have high privileges as he wasn’t able to authorize orders. 
+The following message was returned
+
+*Only admins can authorise orders*
+
+A number of attacks were performed such trying to crack the JWT secret as the HS256 algorithm was used, but with no success.
+
+By fuzzing the registration functionality we are able to create JWT tokens for various user IDs starting for user_id=1 and going up. We also notice that the JWT’s created for the 
+**dev.shipping.UUID.ctfio.com** domain are also valid for the **shipping.UUID.ctfio.com** host.
+
+Below we crate multiple accounts via fuzzing the registration mechanism
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/6ac597f4-5158-4647-af6e-07525704e996)
+
+And below is the JWT token decoded and the user_id is 4.
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/658abab4-f174-4f92-b3e2-5d219459a17c)
+
+Using the above JWT on shipping domain we see that we have a session however we notice that our account is disabled.
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/4b06bbc4-98ff-4a8e-8b09-31c338abcd59)
+
+Interestingly enough, this does not seem as an expected behavior, as the account previously obtained could be used. Therefore some specific conditions might be in place for user with ID 4.
+
+We attempted to create more accounts and for example the account for user with ID 17 can access the appllication with low privileges, similar to the ones that our initial user had.
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/58b8975b-ff0d-4c5f-aa4f-46149e84b808)
+
+The above indicates that the user permission/settings are most likely dictated by the user_id which appears to be common for the two applications.
+
+Registering more accounts, eventually the JWT for user with ID 48 appears to have higher permissions and is able to approve the orders submitted.
+
+![image](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/e7abb1fe-ddf2-4f01-9e2e-72059319eb62)
+
+We can proceed with shipping the order we created and obtain the last flag.
+
+![3](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/4802989a-5dbf-4ec7-82d3-b23ca20de4e4)
 
 
+## Closing remarks
+I would like to give credit to shamollash for working with me and assisting during most of Adam's challenge by exchanging ideas.
+Thanks Adam for creating fresh and interesting challenges.
 
+Please refer to https://hackinghub.io/ for more content and interesting challenges.
