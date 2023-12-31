@@ -218,6 +218,23 @@ We can proceed with shipping the order we created and obtain the last flag.
 
 ![3](https://github.com/tarifas90/CTF-Writeups-2023/assets/55701068/4802989a-5dbf-4ec7-82d3-b23ca20de4e4)
 
+## Flag five - alternative way
+There's a shortcut to get flag 5 without messing with JWT tokens:
+
+I tried to authorise the order at shipping.UUID.ctfio.com/auth and saw params:
+action=authorisation&order_id=...
+
+Then I tried to reject it and saw params: 
+action=reject&order_id=...
+
+And as there are 4 tabs (Required Shipping, Requires Authorisation, Rejected Orders, Shipped Orders), I then tried:
+action=ship&order_id=...
+but it didn't work
+
+So I tried:
+action=shipping&order_id=...
+and I got flag 5 :)
+
 
 ## Closing remarks
 I would like to give credit to shamollash for working with me and assisting during most of Adam's challenge by exchanging ideas.
